@@ -1,0 +1,58 @@
+const mongoose = require('mongoose');
+const uniqueValidator = require("mongoose-unique-validator");
+const validator = require('validator');
+
+const shopSchema = new mongoose.Schema({
+    shopName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        validate(value) {
+            if (!validator.isEmail(value)) {
+                throw new Error("Email is not valid")
+            }
+
+        }
+    },
+    address: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    shopType: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    shopImgUrl: {
+        type: String,
+        required: false,
+        trim: true,
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+
+    }
+}, {
+    timestamps: true,
+
+})
+
+shopSchema.virtual('shopProducts', {
+    ref: 'ShopProduct',
+    localField: '_id',
+    foreignField: 'shop'
+})
+
+shopSchema.plugin(uniqueValidator);
+const Shop = mongoose.model('Shop', shopSchema);
+
+module.exports = Shop;

@@ -2,19 +2,20 @@ const express = require("express");
 require('./db/mongoose');
 const cors = require("cors");
 const path = require("path");
-const passport = require('passport')
-const passportMiddleWare = require('./middleware/passport')
+// const passport = require('passport')
+// const passportMiddleWare = require('./middleware/passport')
 
 const userRoutes = require("./router/userRouter");
+const ownerRoutes = require("./router/shopRouter");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 // app.use("/images", express.static(path.join("images")));
 app.use(express.urlencoded({ extended: false }));
-app.use(passport.initialize())
+// app.use(passport.initialize())
 
-passport.use(passportMiddleWare)
+// passport.use(passportMiddleWare)
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 
 
 app.use("/api/user", userRoutes);
+app.use("/api/shop", ownerRoutes);
 
 app.all('*', (req, res, next) => {
 
@@ -48,3 +50,4 @@ app.all('*', (req, res, next) => {
 });
 
 module.exports = app;
+

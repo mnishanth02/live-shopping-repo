@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true,
         lowercase: true,
         validate(value) {
             if (!validator.isEmail(value)) {
@@ -38,15 +37,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     }
-    // age: {
-    //     type: Number,
-    //     default: 0,
-    //     validate(value) {
-    //         if (value < 0) {
-    //             throw new Error("Age must be positive number")
-    //         }
-    //     }
-    // },
 
     // avatar: {
     //     type: Buffer
@@ -56,11 +46,11 @@ const userSchema = new mongoose.Schema({
 
 })
 
-// userSchema.virtual('tasks', {
-//     ref: 'Task',
-//     localField: '_id',
-//     foreignField: 'author'
-// })
+userSchema.virtual('shops', {
+    ref: 'Shop',
+    localField: '_id',
+    foreignField: 'owner'
+})
 userSchema.methods.toJSON = function () {
     const user = this;
     const userObj = user.toObject()
@@ -71,7 +61,7 @@ userSchema.methods.toJSON = function () {
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
     // console.log(user)
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: 86400 }); //24 hours
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: 86400 }); //24 hours
     // user.tokens = user.tokens.concat({ token })
 
     // await user.save()
@@ -100,6 +90,7 @@ userSchema.pre('save', async function (next) {
     }
     next();
 })
+
 
 // userSchema.pre('remove', async function (next) {
 //     const user = this

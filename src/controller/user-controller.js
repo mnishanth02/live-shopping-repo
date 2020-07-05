@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+
 const User = require("../models/userModel");
 
 
@@ -22,7 +23,7 @@ exports.register = async (req, res, next) => {
         await newUser.save().catch(e => { console.log('Error: ', e.message) })
         //await sendWelcomeEmail(user.email, user.name);
         const token = await newUser.generateAuthToken()
-        res.status(201).send({ newUser, token });
+        res.status(201).send({ user: newUser, token });
     } catch (error) {
         res.status(400).send(error);
         console.log(error);
