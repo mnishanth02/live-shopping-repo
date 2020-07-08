@@ -43,6 +43,47 @@ exports.shops = async (req, res, next) => {
     }
 }
 
+exports.getShopById = async (req, res, next) => {
+    const _id = req.params.shopId;
+    try {
+        const shop = await Shop.findOne({ _id, owner: req.user._id })
+        
+        if (!shop) {
+            return res.status(404).send({ code: 'ERROR', message: 'Shop Not Found', error: 'Shop Not Found' });
+        }
+        res.status(200).send(shop);
+    } catch (error) {
+        res.status(400).send({ code: 'ERROR', message: 'Error occured while registering Shop', error });
+        console.log(error);
+    }
+}
+
+exports.editShop = async (req, res, next) => {
+
+    const _id = req.params.shopId;
+
+    const updatedShop = Shop({
+        _id,
+        shopName: req.body.shopName,
+        email: req.body.email,
+        address: req.body.address,
+        shopType: req.body.shopType,
+        shopImgUrl: req.body.shopImgUrl,
+        owner: req.body.owner,
+    })
+    try {
+        const shop = await Shop.updateOne({ _id, owner: req.user._id }, updatedShop);
+        if (!shop) {
+            return res.status(404).send({ code: 'ERROR', message: 'Shop Not Found', error: 'Shop Not Found' });
+        }
+        res.status(200).send(shop);
+    } catch (error) {
+        res.status(400).send({ code: 'ERROR', message: 'Error occured while Updating shop details', error });
+        console.log(error);
+    }
+
+}
+
 
 exports.addProduct = async (req, res, next) => {
     try {
@@ -78,3 +119,63 @@ exports.allProducts = async (req, res, next) => {
         console.log(error);
     }
 }
+
+
+exports.editShopProduct = async (req, res, next) => {
+
+    const _shopId = req.params.shopId;
+    const _productId = req.params.productId;
+
+    const updatedShop = ShopProduct({
+        _id,
+        productName: req.body.productName,
+        productDescription: req.body.productDescription,
+        productKeyword: req.body.productKeyword,
+        shopType: req.body.shopType,
+        shopImgUrl: req.body.shopImgUrl,
+        owner: req.body.owner,
+    })
+    try {
+        const shop = await Shop.updateOne({ _id, owner: req.user._id }, updatedShop);
+        if (!shop) {
+            return res.status(404).send({ code: 'ERROR', message: 'Shop Not Found', error: 'Shop Not Found' });
+        }
+        res.status(200).send(shop);
+    } catch (error) {
+        res.status(400).send({ code: 'ERROR', message: 'Error occured while Updating shop details', error });
+        console.log(error);
+    }
+
+}
+
+
+exports.getProductById = async (req, res, next) => {
+    const _shopId = req.params.shopId;
+    const _productId = req.params.productId;
+    try {
+        const product = await ShopProduct.findOne({ _id: _productId, owner: req.user._id, shop: _shopId })
+        if (!product) {
+            return res.status(404).send({ code: 'ERROR', message: 'product Not Found', error: 'product Not Found' });
+        }
+        res.status(200).send(product);
+    } catch (error) {
+        res.status(400).send({ code: 'ERROR', message: 'Error occured while retriving product', error });
+        console.log(error);
+    }
+}
+
+exports.deleteProduct = async (req, res, next) => {
+    const _shopId = req.params.shopId;
+    const _productId = req.params.productId;
+    try {
+        const product = await ShopProduct.findOneAndDelete({ _id: _productId, owner: req.user._id, shop: _shopId })
+        if (!product) {
+            return res.status(404).send();
+        }
+        res.status(200).send(product)
+    } catch (error) {
+        res.status(400).send({ code: 'ERROR', message: 'Error occured while retriving product', error });
+        console.log(error);
+    }
+}
+
