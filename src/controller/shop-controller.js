@@ -66,7 +66,7 @@ exports.editShop = async (req, res, next) => {
         _id,
         shopName: req.body.shopName,
         email: req.body.email,
-        address: req.body.address,
+        location: req.body.location,
         shopType: req.body.shopType,
         shopImgUrl: req.body.shopImgUrl,
         owner: req.body.owner,

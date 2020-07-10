@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const uniqueValidator = require("mongoose-unique-validator");
 const validator = require('validator');
 
+
+
 const shopSchema = new mongoose.Schema({
     shopName: {
         type: String,
@@ -20,11 +22,7 @@ const shopSchema = new mongoose.Schema({
 
         }
     },
-    address: {
-        type: String,
-        required: true,
-        trim: true,
-    },
+
     shopType: {
         type: String,
         required: true,
@@ -34,6 +32,13 @@ const shopSchema = new mongoose.Schema({
         type: String,
         required: false,
         trim: true,
+    },
+    location: {
+        address: { type: String, required: true },
+        staticMapImageUrl: { type: String, required: true },
+        lat: { type: Number, required: true },
+        lng: { type: Number, required: true },
+
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
