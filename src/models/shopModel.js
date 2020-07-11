@@ -28,10 +28,8 @@ const shopSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    shopImgUrl: {
-        type: String,
-        required: false,
-        trim: true,
+    shopImage: {
+        type: Buffer,
     },
     location: {
         address: { type: String, required: true },

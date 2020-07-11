@@ -7,8 +7,21 @@ const ShopController = require('../controller/shop-controller')
 
 
 
-//login
-router.post('/register', auth, ShopController.register);  // Tested
+const updaload = new multer({
+    // dest: 'avatars',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('error'))
+        }
+        cb(undefined, true)
+    }
+})
+
+
+router.post('/register', auth, updaload.single('shopImage'), ShopController.register);  // Tested
 router.get('/shops', auth, ShopController.shops); // tested
 
 router.get('/:shopId', auth, ShopController.getShopById); // tested

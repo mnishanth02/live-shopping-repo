@@ -1,23 +1,26 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sharp = require('sharp')
 
 
 const User = require("../models/userModel");
 const Shop = require("../models/shopModel");
 const ShopProduct = require("../models/shopProductsModel");
 
-
 exports.register = async (req, res, next) => {
     try {
+
+       
 
         const existingShop = await Shop.findOne({ email: req.body.email, owner: req.user._id })
 
         if (existingShop) {
             return res.status(400).json({ code: 'SHOP_EXIST', msg: 'Shop already exist for this email' })
         }
-
+        const shopImageBuffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
         const newShop = new Shop({
             ...req.body,
+            shopImage: shopImageBuffer,
             owner: req.user._id
         });
 
