@@ -2,25 +2,28 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sharp = require('sharp')
 
+const mongodb = require('mongodb');
 
 const User = require("../models/userModel");
 const Shop = require("../models/shopModel");
 const ShopProduct = require("../models/shopProductsModel");
 
+
+
 exports.register = async (req, res, next) => {
     try {
-
-       
-
+        const url = req.protocol + "://" + req.get("host");
         const existingShop = await Shop.findOne({ email: req.body.email, owner: req.user._id })
 
         if (existingShop) {
             return res.status(400).json({ code: 'SHOP_EXIST', msg: 'Shop already exist for this email' })
         }
-        const shopImageBuffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+        // const shopImageBuffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+        // console.log(typeof shopImageBuffer)
         const newShop = new Shop({
             ...req.body,
-            shopImage: shopImageBuffer,
+            shopImage: url + "/src/images/" + req.file.filename,
+            location: JSON.parse(req.body.location),
             owner: req.user._id
         });
 
@@ -39,6 +42,7 @@ exports.shops = async (req, res, next) => {
         await req.user.populate({
             'path': 'shops',
         }).execPopulate()
+        res.set('Content-Type', 'image/png')
         res.status(200).send(req.user.shops);
     } catch (error) {
         res.status(400).send({ code: 'ERROR', message: 'Error occured while registering Shop', error });
@@ -50,7 +54,7 @@ exports.getShopById = async (req, res, next) => {
     const _id = req.params.shopId;
     try {
         const shop = await Shop.findOne({ _id, owner: req.user._id })
-        
+
         if (!shop) {
             return res.status(404).send({ code: 'ERROR', message: 'Shop Not Found', error: 'Shop Not Found' });
         }

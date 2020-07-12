@@ -2,27 +2,15 @@ const express = require('express');
 const auth = require('../middleware/auth')
 const multer = require('multer')
 
+const extractFile = require('../middleware/file')
+
 const router = new express.Router();
 
 const ShopController = require('../controller/shop-controller')
 
 
-
-const updaload = new multer({
-    // dest: 'avatars',
-    limits: {
-        fileSize: 1000000
-    },
-    fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-            return cb(new Error('error'))
-        }
-        cb(undefined, true)
-    }
-})
-
-
-router.post('/register', auth, updaload.single('shopImage'), ShopController.register);  // Tested
+// router.post('/imageUpload', auth, updaload.single('shopImage'), ShopController.imageUpload);
+router.post('/register', auth, extractFile, ShopController.register);  // Tested
 router.get('/shops', auth, ShopController.shops); // tested
 
 router.get('/:shopId', auth, ShopController.getShopById); // tested

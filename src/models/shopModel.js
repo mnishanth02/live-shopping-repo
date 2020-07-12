@@ -28,9 +28,7 @@ const shopSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    shopImage: {
-        type: Buffer,
-    },
+    shopImage: { type: String, required: true },
     location: {
         address: { type: String, required: true },
         staticMapImageUrl: { type: String, required: true },
